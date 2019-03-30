@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name:  k8s-debugger
+  namespace: k8s-debugger
+  labels:
+    app:  k8s-debugger
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: k8s-debugger
+    spec:
+      containers:
+      - image:  guilhermeoki/debugger
+        name:  debugger
+        resources:
+          requests:
+            cpu: "20m"
+            memory: "55M"
+        ports:
+        - containerPort:  80
+          name:  debugger-port
+        - containerPort: 443
+          name: auxiliar-port
+        imagePullPolicy: Always
+      restartPolicy: Always
