@@ -1,0 +1,16 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: k8s-debugger
+  namespace: k8s-debugger
+spec:
+  selector:
+    app: k8s-debugger
+  type: ClusterIP
+  ports:
+  - name: debugger-port
+    port:  80
+    targetPort:  80
+  - name: auxiliar-port
+    port: 443
+    targetPort: 443
