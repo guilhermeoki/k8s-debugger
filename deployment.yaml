@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name:  k8s-debugger
+  name: debugger
   namespace: k8s-debugger
   labels:
     app:  k8s-debugger
@@ -29,4 +29,24 @@ spec:
         - containerPort: 443
           name: auxiliar-port
         imagePullPolicy: Always
+      - image:  guilhermeoki/nginx:1.13.10
+        name:  nginx
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "550M"
+        ports:
+        - containerPort:  80
+          name:  debugger-port
+        - containerPort: 443
+          name: auxiliar-port
+        imagePullPolicy: Always
+        volumeMounts:
+        - mountPath: /etc/nginx/conf.d
+          name: nginx-config
       restartPolicy: Always
+      volumes:
+        - name: nginx-config
+          configMap:
+            defaultMode: 420
+            name: nginx-config
