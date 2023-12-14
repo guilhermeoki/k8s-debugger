@@ -4,7 +4,7 @@ metadata:
   name: debugger
   namespace: k8s-debugger
   labels:
-    app:  k8s-debugger
+    app: k8s-debugger
 spec:
   replicas: 1
   selector:
@@ -20,37 +20,28 @@ spec:
       labels:
         app: k8s-debugger
     spec:
-      containers:
-      - image:  guilhermeoki/debugger
-        name:  debugger
-        resources:
-          requests:
-            cpu: "20m"
-            memory: "55M"
-        ports:
-        - containerPort:  80
-          name:  debugger-port
-        - containerPort: 443
-          name: auxiliar-port
-        imagePullPolicy: Always
-      - image:  guilhermeoki/nginx:1.13.10
-        name:  nginx
-        resources:
-          requests:
-            cpu: "200m"
-            memory: "550M"
-        ports:
-        - containerPort:  80
-          name:  debugger-port
-        - containerPort: 443
-          name: auxiliar-port
-        imagePullPolicy: Always
-        volumeMounts:
-        - mountPath: /etc/nginx/conf.d
-          name: nginx-config
-      restartPolicy: Always
       volumes:
+        - name: test-pv-storage
+          persistentVolumeClaim:
+            claimName: test-pv-performance-claim
         - name: nginx-config
           configMap:
             defaultMode: 420
             name: nginx-config
+      containers:
+        - image: guilhermeoki/debugger:v0.1.2
+          name: debugger
+          resources:
+            requests:
+              cpu: "20m"
+              memory: "55M"
+          ports:
+            - containerPort: 80
+              name: debugger-port
+            - containerPort: 443
+              name: auxiliar-port
+          imagePullPolicy: Always
+          volumeMounts:
+            - mountPath: "/tmp/"
+              name: test-pv-storage
+      restartPolicy: Always
